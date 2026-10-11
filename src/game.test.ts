@@ -117,4 +117,17 @@ describe("Shatter simulation", () => {
     ).toThrow("Unknown id");
     e.destroy();
   });
+
+  it("resolves a fast bullet across multiple wraps in one tick", async () => {
+    const e = await setup();
+    e.apply((s) => e.debug.setScreen(s, "playing"));
+    e.apply((s) => e.debug.setWaveSpawning(s, false));
+    e.apply((s) => e.debug.setShipCollision(s, false));
+    e.apply((s) => e.debug.addRock(s, "small", 500, 300));
+    e.apply((s) => e.debug.addBullet(s, 100, 300, FIELD_W * 120 * 4, 0));
+    await e.advance(1);
+    expect(e.state.rocks).toHaveLength(0);
+    expect(e.state.score).toBe(100);
+    e.destroy();
+  });
 });

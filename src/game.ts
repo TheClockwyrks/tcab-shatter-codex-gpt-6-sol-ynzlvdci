@@ -543,12 +543,18 @@ const swept = (
   bv: { x: number; y: number },
   radius: number,
 ) => {
-  for (const ox of [-C.FIELD_W, 0, C.FIELD_W])
-    for (const oy of [-C.FIELD_H, 0, C.FIELD_H]) {
-      const x = a.x - b.x + ox,
-        y = a.y - b.y + oy,
-        vx = av.x - bv.x,
-        vy = av.y - bv.y;
+  const x0 = a.x - b.x,
+    y0 = a.y - b.y,
+    vx = av.x - bv.x,
+    vy = av.y - bv.y;
+  const minX = Math.ceil((-Math.max(x0, x0 + vx) - radius) / C.FIELD_W);
+  const maxX = Math.floor((-Math.min(x0, x0 + vx) + radius) / C.FIELD_W);
+  const minY = Math.ceil((-Math.max(y0, y0 + vy) - radius) / C.FIELD_H);
+  const maxY = Math.floor((-Math.min(y0, y0 + vy) + radius) / C.FIELD_H);
+  for (let ix = minX; ix <= maxX; ix++)
+    for (let iy = minY; iy <= maxY; iy++) {
+      const x = x0 + ix * C.FIELD_W,
+        y = y0 + iy * C.FIELD_H;
       const t = Math.max(
         0,
         Math.min(1, -(x * vx + y * vy) / (vx * vx + vy * vy || 1)),
